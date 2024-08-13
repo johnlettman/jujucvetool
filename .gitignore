@@ -4,6 +4,9 @@
 *.adoc
 *.pdf
 
+# Old test APs
+ap-*
+
 ### JetBrains
 # Configuration
 .idea
