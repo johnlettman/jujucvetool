@@ -1,8 +1,15 @@
-from functools import reduce
+from functools import reduce, lru_cache
 
+from cvescan.constants import UCT_DATA_URL
 from cvescan.scan_result import ScanResult
 from enum import Enum
 from typing import Iterable, Dict
+from logging import getLogger
+
+from ust_download_cache import USTDownloadCache
+
+from jujucvetool.util import singleton
+
 
 class Priority(Enum):
     CRITICAL = 1
@@ -39,3 +46,12 @@ def tally_priority(tally: PrioritiesTally, result: ScanResult) -> PrioritiesTall
 
 def tally_priorities(results: ScanResults) -> PrioritiesTally:
     return reduce(tally_priority, results, {})
+
+@singleton
+def get_ust_download_cache() -> USTDownloadCache:
+    return USTDownloadCache(getLogger())
+
+@lru_cache()
+def get_ust_data_for(series: str = "xenial"):
+    url = UCT_DATA_URL % series
+    return get_ust_download_cache().get_data_from_url(url)

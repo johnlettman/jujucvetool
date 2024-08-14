@@ -1,3 +1,5 @@
+from functools import wraps
+
 def cached_property(func):
     """A decorator that caches the result of a method call."""
 
@@ -13,3 +15,16 @@ def cached_property(func):
             return result
 
     return Descriptor(func)
+
+def singleton(func):
+    """A decorator that caches the result of a method call once."""
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        if not wrapper.complete:
+            wrapper.result = func(*args, **kwargs)
+            wrapper.complete = True
+        return wrapper.result
+
+    wrapper.complete = False
+    wrapper.result = None
+    return wrapper
