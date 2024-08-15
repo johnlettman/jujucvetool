@@ -33,6 +33,10 @@ class Machine:
         return str(self.machine_id)
 
     @property
+    def reference(self) -> str:
+        return f"-m {str(self.model)} {self.machine_id}"
+
+    @property
     def controller(self) -> "Controller":
         return self.model.controller
 
