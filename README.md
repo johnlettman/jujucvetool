@@ -5,6 +5,10 @@
 # Juju CVE Tool
 A highly automated tool for examining [Critical Vulnerabilities and Exposures][wiki-cve] on Ubuntu systems managed by Juju.
 
+[![License][shield-license]][url-license]
+![Programming Language][shield-language]
+[![Tests][shield-tests]][url-tests]
+
 <hr>
 </div>
 
@@ -78,3 +82,12 @@ poetry run pytest -s
 
 [screenshot]: .github/assets/screenshot.png
 [wiki-cve]: https://en.wikipedia.org/wiki/Common_Vulnerabilities_and_Exposures
+
+[shield-license]: https://img.shields.io/github/license/johnlettman/jujucvetool?style=for-the-badge
+[url-license]: ./LICENSE
+
+[shield-language]: https://img.shields.io/github/languages/top/johnlettman/jujucvetool?style=for-the-badge
+
+[shield-tests]: https://img.shields.io/github/actions/workflow/status/johnlettman/jujucvetool/ci.yml?style=for-the-badge&label=tests
+[url-tests]: https://github.com/johnlettman/jujucvetool/actions/workflows/ci.yml
+
