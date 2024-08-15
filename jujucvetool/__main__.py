@@ -15,11 +15,12 @@ from jujucvetool.cli.manifest import get_manifest, get_manifests
 from jujucvetool.cloud import Cloud
 
 PROGRAM_NAME = "jujucvetool"
-PROGRAM_VERSION = "unknown"
+
 try:
     PROGRAM_VERSION = version(PROGRAM_NAME)
 except PackageNotFoundError:
-    pass
+    # we will simply fall back to "unknown"
+    PROGRAM_VERSION = "unknown"
 
 LOGGING_LEVELS = {
     0: logging.ERROR,
