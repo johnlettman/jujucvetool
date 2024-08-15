@@ -39,7 +39,7 @@ class Cloud(Connection, Context):
                 }
             )
 
-            Connection.__init__(self, host, config=config, *args, **kwargs)
+            Connection.__init__(self, host, *args, config=config, **kwargs)
 
     def open(self) -> None:
         if self.original_host != "local":
