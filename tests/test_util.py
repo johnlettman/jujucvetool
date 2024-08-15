@@ -1,6 +1,8 @@
 import unittest
 
-from jujucvetool.util import cached_property, singleton, codename_from_manifest
+from jujucvetool.util import cached_property
+from jujucvetool.util import codename_from_manifest
+from jujucvetool.util import singleton
 
 
 class TestCachedProperty(unittest.TestCase):
@@ -60,24 +62,22 @@ class TestSingleton(unittest.TestCase):
 
 class TestCodenameFromManifest(unittest.TestCase):
     def test_codename_from_manifest(self):
-        manifest = {
-            "update-manager-core": "1:20.04.10"
-        }
+        manifest = {"update-manager-core": "1:20.04.10"}
         codename = codename_from_manifest(manifest)
         self.assertEqual(codename, "focal")
 
     def test_codename_from_manifest_no_match(self):
-        manifest = {
-            "update-manager-core": "1:19.04.1"
-        }
+        manifest = {"update-manager-core": "1:19.04.1"}
         with self.assertRaises(Exception) as context:
             codename_from_manifest(manifest)
         self.assertIn("Could not match version to a supported release.", str(context.exception))
 
     def test_codename_from_manifest_missing_package(self):
-        manifest = {
-            "some-other-package": "1.0.0"
-        }
+        manifest = {"some-other-package": "1.0.0"}
         with self.assertRaises(Exception) as context:
             codename_from_manifest(manifest)
         self.assertIn("Failed to determine ubuntu release codename", str(context.exception))
+
+
+if __name__ == "__main__":
+    unittest.main()
