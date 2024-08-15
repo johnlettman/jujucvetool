@@ -43,3 +43,6 @@ class Model:
         for machine in self.machines:
             if machine.machine_id == machine_id:
                 return machine
+
+        # none found:
+        return None

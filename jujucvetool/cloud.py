@@ -101,6 +101,9 @@ class Cloud(Connection, Context):
                     if model.short_name == model_name or model.name == model_name:
                         return model
 
+        # none found:
+        return None
+
 
 
 
