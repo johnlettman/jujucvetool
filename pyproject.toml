@@ -11,7 +11,7 @@ classifiers = [
     "Operating System :: POSIX :: Linux",
 ]
 packages = [
-    { include = "*", from = "src" }
+    { include = "jujucvetool", from = "src" }
 ]
 
 [tool.poetry.scripts]
