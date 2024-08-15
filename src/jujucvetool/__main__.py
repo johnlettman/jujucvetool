@@ -12,7 +12,7 @@ from rich_click import RichContext
 from rich_click import rich_click
 import rich_click as click
 
-from jujucvetool.cli.cve import cves_for
+from jujucvetool.cli.cve import cves_for, cves
 from jujucvetool.cli.list import list_controllers
 from jujucvetool.cli.list import list_models
 from jujucvetool.cli.manifest import get_manifest
@@ -136,6 +136,7 @@ main.add_command(list_models)
 main.add_command(get_manifest)
 main.add_command(get_manifests)
 main.add_command(cves_for)
+main.add_command(cves)
 
 if __name__ == "__main__":
     main(obj={}, prog_name="jujucvetool")

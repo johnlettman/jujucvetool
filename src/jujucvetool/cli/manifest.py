@@ -24,7 +24,7 @@ def print_manifest(console: Console, fancy: bool, machine: Machine) -> None:
         console.print(machine.manifest)
 
 
-@click.command("get-manifests")
+@click.command("get-manifests", help="Get manifests for all machines on the specified cloud.")
 @click.option("--fancy/--no-fancy", type=click.BOOL, default=True, help="Use fancy output.")
 @click.option(
     "--controller",
@@ -91,7 +91,7 @@ click.rich_click.OPTION_GROUPS["jujucvetool get-manifests"] = [
 ]
 
 
-@click.command("get-manifest")
+@click.command("get-manifest", help="Get the manifest for a specified machine.")
 @click.option("--fancy/--no-fancy", type=click.BOOL, default=True, help="Use fancy output.")
 @click.option(
     "--controller",

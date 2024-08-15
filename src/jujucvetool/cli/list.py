@@ -4,7 +4,7 @@ from rich_click import RichContext
 from jujucvetool.cloud import Cloud
 
 
-@click.command("list-controllers")
+@click.command("list-controllers", help="List controllers on the specified cloud.")
 @click.pass_context
 def list_controllers(context: RichContext):
     cloud: Cloud = context.obj["cloud"]
@@ -13,7 +13,7 @@ def list_controllers(context: RichContext):
         print(str(controller))
 
 
-@click.command("list-models")
+@click.command("list-models", help="List models on the specified cloud.")
 @click.pass_context
 def list_models(context: RichContext):
     cloud: Cloud = context.obj["cloud"]

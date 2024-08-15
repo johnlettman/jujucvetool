@@ -32,7 +32,7 @@ def print_cves(console: Console, fancy: bool, machine: Machine):
             console.print(f"- {cve} {priority} {package}\n" f"  fixed in: {fixed_version}\n" f"  repo: {repository}\n")
 
 
-@click.command("cves")
+@click.command("cves", help="List CVEs across machines on the specified cloud.")
 @click.option("--fancy/--no-fancy", type=click.BOOL, default=True, help="Use fancy output.")
 @click.option(
     "--controller",
@@ -99,7 +99,7 @@ click.rich_click.OPTION_GROUPS["jujucvetool cves"] = [
 ]
 
 
-@click.command("cves-for")
+@click.command("cves-for", help="List CVEs for a specific machine.")
 @click.option("--fancy/--no-fancy", type=click.BOOL, default=True, help="Use fancy output.")
 @click.option(
     "--controller",
