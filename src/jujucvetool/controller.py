@@ -6,8 +6,8 @@ from typing import Dict
 from typing import Iterable
 from typing import Optional
 
-from src.jujucvetool.model import Model
-from src.jujucvetool.util import cached_property
+from jujucvetool.model import Model
+from jujucvetool.util import cached_property
 
 
 if TYPE_CHECKING:

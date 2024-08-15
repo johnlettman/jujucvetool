@@ -5,8 +5,8 @@ from rich.table import Table
 from rich_click import RichContext
 import rich_click as click
 
-from src.jujucvetool.cloud import Cloud
-from src.jujucvetool.machine import Machine
+from jujucvetool.cloud import Cloud
+from jujucvetool.machine import Machine
 
 
 def print_manifest(console: Console, fancy: bool, machine: Machine) -> None:

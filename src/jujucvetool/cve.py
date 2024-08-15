@@ -12,7 +12,7 @@ from cvescan.cvescanner import CVEScanner
 from cvescan.scan_result import ScanResult
 from ust_download_cache import USTDownloadCache
 
-from src.jujucvetool.util import singleton
+from jujucvetool.util import singleton
 
 
 class Priority(Enum):

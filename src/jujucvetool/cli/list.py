@@ -1,7 +1,7 @@
 import click
 from rich_click import RichContext
 
-from src.jujucvetool.cloud import Cloud
+from jujucvetool.cloud import Cloud
 
 
 @click.command("list-controllers")

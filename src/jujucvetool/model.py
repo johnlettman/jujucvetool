@@ -6,12 +6,12 @@ from typing import Dict
 from typing import Iterable
 from typing import Optional
 
-from src.jujucvetool.machine import Machine
+from jujucvetool.machine import Machine
 
 
 if TYPE_CHECKING:
-    from src.jujucvetool.cloud import Cloud
-    from src.jujucvetool.controller import Controller
+    from jujucvetool.cloud import Cloud
+    from jujucvetool.controller import Controller
 
 
 class Model:

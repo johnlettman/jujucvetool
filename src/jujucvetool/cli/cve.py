@@ -5,10 +5,10 @@ from rich.table import Table
 from rich_click import RichContext
 import rich_click as click
 
-from src.jujucvetool.cloud import Cloud
-from src.jujucvetool.cve import id_to_rich_link
-from src.jujucvetool.cve import map_result_ids
-from src.jujucvetool.machine import Machine
+from jujucvetool.cloud import Cloud
+from jujucvetool.cve import id_to_rich_link
+from jujucvetool.cve import map_result_ids
+from jujucvetool.machine import Machine
 
 
 def print_cves(console: Console, fancy: bool, machine: Machine):
