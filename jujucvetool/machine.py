@@ -2,11 +2,10 @@ from shlex import quote as shell_quote
 from typing import TYPE_CHECKING, Dict, Union, Optional
 
 from cvescan.dpkg_parser import get_installed_pkgs_from_manifest as packages_from_manifest
-from cvescan.scan_result import ScanResult
 from fabric import Result as FabricResult
 from invoke import Result as InvokeResult
 
-from jujucvetool.cve import get_scanner, get_ust_download_cache, get_ust_data_for
+from jujucvetool.cve import get_scanner,  get_ust_data_for, ScanResults
 from jujucvetool.util import cached_property, codename_from_manifest
 
 if TYPE_CHECKING:
@@ -57,7 +56,7 @@ class Machine:
         return codename_from_manifest(self.packages)
 
     @property
-    def cves(self) -> list[ScanResult]:
+    def cves(self) -> ScanResults:
         data = get_ust_data_for(self.codename)
         scanner = get_scanner()
 

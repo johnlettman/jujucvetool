@@ -1,17 +1,17 @@
 from typing import List
 
 import rich_click as click
-from cvescan.scan_result import ScanResult
 from rich.console import Console
 from rich.table import Table
 from rich_click import RichContext
 
 from jujucvetool.cloud import Cloud
+from jujucvetool.cve import map_result_ids, id_to_rich_link
 from jujucvetool.machine import Machine
 
 
 def print_cves(console: Console, fancy: bool, machine: Machine):
-    result = machine.cves
+    results = machine.cves
     if fancy:
         table = Table(title=machine.hostname, title_justify="left", row_styles=["dim", ""])
         table.add_column("CVE", justify="left", style="bold cyan", no_wrap=True)
@@ -20,17 +20,18 @@ def print_cves(console: Console, fancy: bool, machine: Machine):
         table.add_column("Fixed Version", justify="left", style="green", no_wrap=True)
         table.add_column("Repository", justify="right", style="green", no_wrap=True)
 
-        for row in result:
+        for row in map_result_ids(results, id_to_rich_link):
             table.add_row(*row)
 
         console.print(table)
     else:
         console.print(f"# {machine.hostname}")
-        for row in result:
+        for row in map_result_ids(results, id_to_rich_link):
             (cve, priority, package, fixed_version, repository) = row
             console.print(f"- {cve} {priority} {package}\n"
                           f"  fixed in: {fixed_version}\n"
                           f"  repo: {repository}\n")
+
 
 @click.command("cves")
 @click.option(
@@ -74,13 +75,14 @@ def print_cves(console: Console, fancy: bool, machine: Machine):
     help="Skip processing the specified model. [b][cyan]Supports multiple.[/cyan][/b]")
 @click.pass_context
 def cves(context: RichContext, fancy: bool, controller: List[str], model: List[str],
-                  skip_controller: List[str], skip_model: List[str]) -> None:
+         skip_controller: List[str], skip_model: List[str]) -> None:
     cloud: Cloud = context.obj["cloud"]
     console = Console()
 
     for model in cloud.filter(controller, model, skip_controller, skip_model):
         for machine in model.machines:
             print_cves(console, fancy, machine)
+
 
 click.rich_click.OPTION_GROUPS["jujucvetool cves"] = [
     {"name": "Formatting", "options": ["--fancy/--no-fancy"]},

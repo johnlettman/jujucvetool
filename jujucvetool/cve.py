@@ -1,10 +1,11 @@
 from functools import reduce, lru_cache
+from idlelib.pyparse import trans
 
 from cvescan.constants import UCT_DATA_URL
 from cvescan.cvescanner import CVEScanner
 from cvescan.scan_result import ScanResult
 from enum import Enum
-from typing import Iterable, Dict, Any
+from typing import Iterable, Dict, Any, Callable
 from logging import getLogger
 
 from ust_download_cache import USTDownloadCache
@@ -24,6 +25,7 @@ class Priority(Enum):
         return Priority[string.upper()]
 
 ScanResults = Iterable[ScanResult]
+ScanResultIDTransform = Callable[[str], str]
 PrioritiesTally = Dict[Priority, int]
 
 def sort_priority(results: ScanResults) -> ScanResults:
@@ -32,13 +34,18 @@ def sort_priority(results: ScanResults) -> ScanResults:
 def filter_unpatched(results: ScanResults) -> ScanResults:
     return filter(lambda result: result.fixed_version is not None, results)
 
-def transform_id_to_adoc_link(result: ScanResult) -> ScanResult:
-    (cve_id, priority, package_name, fixed_version, repository) = result
-    return ScanResult(f"https://nvd.nist.gov/vuln/detail/{cve_id}[{cve_id}]",
-                      priority, package_name, fixed_version, repository)
+def id_to_adoc_link(cve_id: str) -> str:
+    return f"https://nvd.nist.gov/vuln/detail/{cve_id}[{cve_id}]"
 
-def map_id_to_adoc_link(results: ScanResults) -> ScanResults:
-    return map(transform_id_to_adoc_link, results)
+def id_to_rich_link(cve_id: str) -> str:
+    return f"[link=https://nvd.nist.gov/vuln/detail/{cve_id}]{cve_id}[/link]"
+
+def transform_result_id(result: ScanResult, transform: ScanResultIDTransform) -> ScanResult:
+    (cve_id, priority, package_name, fixed_version, repository) = result
+    return ScanResult(transform(cve_id), priority, package_name, fixed_version, repository)
+
+def map_result_ids(results: ScanResults, transform: ScanResultIDTransform) -> ScanResults:
+    return map(lambda result: transform_result_id(result, transform), results)
 
 def tally_priority(tally: PrioritiesTally, result: ScanResult) -> PrioritiesTally:
     priority = Priority.from_str(result.priority)
