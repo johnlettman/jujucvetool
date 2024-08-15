@@ -13,9 +13,9 @@ from fabric import Result as FabricResult
 from invoke import Result as InvokeResult
 from invoke.context import Context
 
-from jujucvetool.controller import Controller
-from jujucvetool.model import Model
-from jujucvetool.util import cached_property
+from src.jujucvetool.controller import Controller
+from src.jujucvetool.model import Model
+from src.jujucvetool.util import cached_property
 
 
 class Cloud(Connection, Context):

@@ -58,22 +58,22 @@ python -m jujucvetool --help
 #### Performing checks locally
 ```bash
 # Lint import order with isort
-poetry run isort ./jujucvetool --check
+poetry run isort ./src --check
 
 # Fix import order with isort
-poetry run isort ./jujucvetool
+poetry run isort ./src
 
 # Lint with flake8
-poetry run flake8 ./jujucvetool
+poetry run flake8 ./src
 
 # Lint with mypy
-poetry run mypy ./jujucvetool
+poetry run mypy ./src
 
 # Lint code format with black
-poetry run black ./jujucvetool --check
+poetry run black ./src --check
 
 # Fix code format with black
-poetry run black ./jujucvetool
+poetry run black ./src
 
 # Execute unit tests
 poetry run pytest -s

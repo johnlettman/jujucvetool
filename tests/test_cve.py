@@ -5,7 +5,7 @@ from cvescan.constants import UCT_DATA_URL
 from cvescan.scan_result import ScanResult
 from ust_download_cache import USTDownloadCache
 
-from jujucvetool.cve import Priority, sort_priority, filter_unpatched, id_to_adoc_link, id_to_rich_link, \
+from src.jujucvetool import Priority, sort_priority, filter_unpatched, id_to_adoc_link, id_to_rich_link, \
     transform_result_id, map_result_ids, tally_priority, tally_priorities, get_ust_download_cache, get_ust_data_for, \
     get_scanner
 

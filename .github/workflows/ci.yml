@@ -79,7 +79,7 @@ jobs:
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: poetry install --no-interaction --no-root --all-extras --with dev
       - name: Run black
-        run: poetry run black ./jujucvetool --check
+        run: poetry run black ./src --check
 
   flake8:
     name: Lint with flake8
@@ -109,7 +109,7 @@ jobs:
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: poetry install --no-interaction --no-root --all-extras --with dev
       - name: Run flake8
-        run: poetry run flake8 ./jujucvetool
+        run: poetry run flake8 ./src
 
   isort:
     name: Lint with isort
@@ -139,7 +139,7 @@ jobs:
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: poetry install --no-interaction --no-root --all-extras --with dev
       - name: Run isort
-        run: poetry run isort ./jujucvetool --check
+        run: poetry run isort ./src --check
 
   test:
     name: Test on ${{ matrix.os }} with Python ${{ matrix.python-version }}
@@ -174,7 +174,7 @@ jobs:
       if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
       run: poetry install --no-interaction --no-root --all-extras --with dev,test,coverage
     - name: Run tests and collect coverage
-      run: poetry run pytest --cov=./jujucvetool --cov-report=xml
+      run: poetry run pytest --cov=./src --cov-report=xml
     - name: Determine if CODECOV_TOKEN is available
       id: has_codecov
       run: echo 'result=${{ secrets.CODECOV_TOKEN }}' >> $GITHUB_OUTPUT

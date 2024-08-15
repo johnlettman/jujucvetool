@@ -8,17 +8,17 @@ from cvescan.dpkg_parser import get_installed_pkgs_from_manifest as packages_fro
 from fabric import Result as FabricResult
 from invoke import Result as InvokeResult
 
-from jujucvetool.cve import ScanResults
-from jujucvetool.cve import get_scanner
-from jujucvetool.cve import get_ust_data_for
-from jujucvetool.util import cached_property
-from jujucvetool.util import codename_from_manifest
+from src.jujucvetool.cve import ScanResults
+from src.jujucvetool.cve import get_scanner
+from src.jujucvetool.cve import get_ust_data_for
+from src.jujucvetool.util import cached_property
+from src.jujucvetool.util import codename_from_manifest
 
 
 if TYPE_CHECKING:
-    from jujucvetool.cloud import Cloud
-    from jujucvetool.controller import Controller
-    from jujucvetool.model import Model
+    from src.jujucvetool.cloud import Cloud
+    from src.jujucvetool.controller import Controller
+    from src.jujucvetool.model import Model
 
 
 class Machine:

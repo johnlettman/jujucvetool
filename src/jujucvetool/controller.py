@@ -6,12 +6,12 @@ from typing import Dict
 from typing import Iterable
 from typing import Optional
 
-from jujucvetool.model import Model
-from jujucvetool.util import cached_property
+from src.jujucvetool.model import Model
+from src.jujucvetool.util import cached_property
 
 
 if TYPE_CHECKING:
-    from jujucvetool.cloud import Cloud
+    from src.jujucvetool.cloud import Cloud
 
 
 class Controller:

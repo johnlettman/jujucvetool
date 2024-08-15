@@ -11,7 +11,7 @@ classifiers = [
     "Operating System :: POSIX :: Linux",
 ]
 packages = [
-    { include = "jujucvetool" }
+    { include = "*", from = "src" }
 ]
 
 [tool.poetry.dependencies]
@@ -89,7 +89,7 @@ honor_noqa = true
 atomic = true
 ignore_comments = false
 skip_gitignore = true
-src_paths = ['jujucvetool', 'tests']
+src_paths = ['src', 'tests']
 
 [tool.flake8]
 max-line-length = 120

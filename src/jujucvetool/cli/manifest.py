@@ -5,34 +5,26 @@ from rich.table import Table
 from rich_click import RichContext
 import rich_click as click
 
-from jujucvetool.cloud import Cloud
-from jujucvetool.cve import id_to_rich_link
-from jujucvetool.cve import map_result_ids
-from jujucvetool.machine import Machine
+from src.jujucvetool.cloud import Cloud
+from src.jujucvetool.machine import Machine
 
 
-def print_cves(console: Console, fancy: bool, machine: Machine):
-    results = machine.cves
+def print_manifest(console: Console, fancy: bool, machine: Machine) -> None:
     if fancy:
         table = Table(title=machine.hostname, title_justify="left", row_styles=["dim", ""])
-        table.add_column("CVE", justify="left", style="bold cyan", no_wrap=True)
-        table.add_column("Priority", justify="left", style="green", no_wrap=True)
-        table.add_column("Package", justify="left", style="green", no_wrap=True)
-        table.add_column("Fixed Version", justify="left", style="green", no_wrap=True)
-        table.add_column("Repository", justify="right", style="green", no_wrap=True)
+        table.add_column("Package", justify="left", style="bold cyan", no_wrap=True)
+        table.add_column("Version", justify="left", style="green", no_wrap=True)
 
-        for row in map_result_ids(results, id_to_rich_link):
-            table.add_row(*row)
+        for line in machine.manifest.splitlines():
+            (package, package_version) = line.split("\t")
+            table.add_row(package, package_version)
 
         console.print(table)
     else:
-        console.print(f"# {machine.hostname}")
-        for row in map_result_ids(results, id_to_rich_link):
-            (cve, priority, package, fixed_version, repository) = row
-            console.print(f"- {cve} {priority} {package}\n" f"  fixed in: {fixed_version}\n" f"  repo: {repository}\n")
+        console.print(machine.manifest)
 
 
-@click.command("cves")
+@click.command("get-manifests")
 @click.option("--fancy/--no-fancy", type=click.BOOL, default=True, help="Use fancy output.")
 @click.option(
     "--controller",
@@ -77,7 +69,7 @@ def print_cves(console: Console, fancy: bool, machine: Machine):
     help="Skip processing the specified model. [b][cyan]Supports multiple.[/cyan][/b]",
 )
 @click.pass_context
-def cves(
+def get_manifests(
     context: RichContext,
     fancy: bool,
     controller: List[str],
@@ -90,16 +82,16 @@ def cves(
 
     for cloud_model in cloud.filter(controller, model, skip_controller, skip_model):
         for machine in cloud_model.machines:
-            print_cves(console, fancy, machine)
+            print_manifest(console, fancy, machine)
 
 
-click.rich_click.OPTION_GROUPS["jujucvetool cves"] = [
+click.rich_click.OPTION_GROUPS["jujucvetool get-manifests"] = [
     {"name": "Formatting", "options": ["--fancy/--no-fancy"]},
     {"name": "Selection", "options": ["--controller", "--model", "--skip-controller", "--skip-model"]},
 ]
 
 
-@click.command("cves-for")
+@click.command("get-manifest")
 @click.option("--fancy/--no-fancy", type=click.BOOL, default=True, help="Use fancy output.")
 @click.option(
     "--controller",
@@ -107,12 +99,19 @@ click.rich_click.OPTION_GROUPS["jujucvetool cves"] = [
     metavar="CONTROLLER",
     type=click.STRING,
     required=True,
-    help="Process the specified controller.",
+    help="\n\n".join(["Process the specified controller."]),
 )
-@click.option("--model", "-m", metavar="MODEL", type=click.STRING, required=True, help="Process the specified model.")
+@click.option(
+    "--model",
+    "-m",
+    metavar="MODEL",
+    type=click.STRING,
+    required=True,
+    help="\n\n".join(["Process the specified model."]),
+)
 @click.argument("machine", metavar="ID", type=click.STRING)
 @click.pass_context
-def cves_for(context: RichContext, fancy: bool, controller: str, model: str, machine: str) -> None:
+def get_manifest(context: RichContext, fancy: bool, controller: str, model: str, machine: str) -> None:
     cloud: Cloud = context.obj["cloud"]
     console = Console()
 
@@ -124,33 +123,10 @@ def cves_for(context: RichContext, fancy: bool, controller: str, model: str, mac
     if not selected_machine:
         raise ValueError("Could not find the specified machine")
 
-    print_cves(console, fancy, selected_machine)
+    print_manifest(console, fancy, selected_machine)
 
 
-click.rich_click.OPTION_GROUPS["jujucvetool cves-for"] = [
+click.rich_click.OPTION_GROUPS["jujucvetool get-manifest"] = [
     {"name": "Formatting", "options": ["--fancy/--no-fancy"]},
     {"name": "Selection", "options": ["--controller", "--model", "machine"]},
-    {"name": "Output", "options": ["--output", "--format"]},
 ]
-
-
-# TODO:
-# @click.option(
-#     "--output",
-#     "-o",
-#     metavar="FILE",
-#     type=click.File,
-#     required=False,
-#     default=None,
-#     help="Output the results to the specified file.",
-# )
-# @click.option(
-#     "--format",
-#     "-f",
-#     metavar="FORMAT",
-#     type=click.STRING,
-#     options=("csv", "json", "adoc", "pdf"),
-#     default="csv",
-#     show_default=True,
-#     help="Output the results with the specified format.",
-# )
