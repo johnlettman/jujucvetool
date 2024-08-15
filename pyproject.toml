@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "juju-cve-tool"
+name = "jujucvetool"
 version = "0.1.0"
 description = "A simple tool to identify CVEs across Juju environments and generate scripts to resolve them through updates"
 authors = ["John P. Lettman <the@johnlettman.com>"]
@@ -9,6 +9,9 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
     "Operating System :: POSIX :: Linux",
+]
+packages = [
+    { include = "jujucvetool" }
 ]
 
 [tool.poetry.dependencies]
