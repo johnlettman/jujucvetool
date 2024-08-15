@@ -57,6 +57,12 @@ optional = true
 coverage = "^7.0.0"
 pytest-cov = "^5.0.0"
 
+[tool.pytest.ini_options]
+pythonpath = "src"
+addopts = [
+    "--import-mode=importlib",
+]
+
 [tool.coverage.run]
 branch = true
 omit = ["*/tests/*"]
