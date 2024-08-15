@@ -60,9 +60,9 @@ class Cloud(Connection, Context):
             )
         else:
             return (
-                Context.sudo(self, user=self.doas, *args, **kwargs)
+                Context.sudo(self, *args, user=self.doas, **kwargs)
                 if self.original_host == "local"
-                else Connection.sudo(self, user=self.doas, *args, **kwargs)
+                else Connection.sudo(self, *args, user=self.doas, **kwargs)
             )
 
     @cached_property
