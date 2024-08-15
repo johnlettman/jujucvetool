@@ -12,7 +12,8 @@ from rich_click import RichContext
 from rich_click import rich_click
 import rich_click as click
 
-from jujucvetool.cli.cve import cves_for, cves
+from jujucvetool.cli.cve import cves
+from jujucvetool.cli.cve import cves_for
 from jujucvetool.cli.list import list_controllers
 from jujucvetool.cli.list import list_models
 from jujucvetool.cli.manifest import get_manifest
