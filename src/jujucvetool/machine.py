@@ -7,6 +7,7 @@ from typing import Union
 from cvescan.dpkg_parser import get_installed_pkgs_from_manifest as packages_from_manifest
 from fabric import Result as FabricResult
 from invoke import Result as InvokeResult
+from slugify import slugify
 
 from jujucvetool.cve import ScanResults
 from jujucvetool.cve import get_scanner
@@ -35,6 +36,10 @@ class Machine:
     @property
     def reference(self) -> str:
         return f"-m {str(self.model)} {self.machine_id}"
+
+    @property
+    def slug(self) -> str:
+        return slugify(f"{str(self.model)}.{str(self)}")
 
     @property
     def controller(self) -> "Controller":

@@ -1,4 +1,8 @@
+from io import TextIOWrapper
+from logging import getLogger
+from os import path
 from typing import List
+from typing import Optional
 
 from rich.console import Console
 from rich.table import Table
@@ -6,22 +10,24 @@ from rich_click import RichContext
 import rich_click as click
 
 from jujucvetool.cloud import Cloud
-from jujucvetool.machine import Machine
 
 
-def print_manifest(console: Console, fancy: bool, machine: Machine) -> None:
+logger = getLogger(__name__)
+
+
+def print_manifest(console: Console, hostname: str, manifest: str, fancy: bool) -> None:
     if fancy:
-        table = Table(title=machine.hostname, title_justify="left", row_styles=["dim", ""])
+        table = Table(title=hostname, title_justify="left", row_styles=["dim", ""])
         table.add_column("Package", justify="left", style="bold cyan", no_wrap=True)
         table.add_column("Version", justify="left", style="green", no_wrap=True)
 
-        for line in machine.manifest.splitlines():
+        for line in manifest.splitlines():
             (package, package_version) = line.split("\t")
             table.add_row(package, package_version)
 
         console.print(table)
     else:
-        console.print(machine.manifest)
+        console.print(manifest)
 
 
 @click.command("get-manifests", help="Get manifests for all machines on the specified cloud.")
@@ -68,6 +74,15 @@ def print_manifest(console: Console, fancy: bool, machine: Machine) -> None:
     multiple=True,
     help="Skip processing the specified model. [b][cyan]Supports multiple.[/cyan][/b]",
 )
+@click.option(
+    "--output",
+    "-o",
+    metavar="DIR",
+    type=click.Path(file_okay=False, dir_okay=True, writable=True),
+    required=False,
+    default=None,
+    help="Output the manifests to the specified directory.",
+)
 @click.pass_context
 def get_manifests(
     context: RichContext,
@@ -76,13 +91,24 @@ def get_manifests(
     model: List[str],
     skip_controller: List[str],
     skip_model: List[str],
+    output: Optional[str],
 ) -> None:
     cloud: Cloud = context.obj["cloud"]
     console = Console()
 
     for cloud_model in cloud.filter(controller, model, skip_controller, skip_model):
-        for machine in cloud_model.machines:
-            print_manifest(console, fancy, machine)
+        for selected_machine in cloud_model.machines:
+            hostname = selected_machine.hostname
+            manifest = selected_machine.manifest
+
+            if output:
+                output_path = path.join(output, f"{selected_machine.slug}.manifest")
+                with open(output_path, "w") as output_file:
+                    output_file.write(manifest)
+                    output_file.close()
+                    logger.info(f"Wrote manifest for {hostname} to {output_path}")
+            else:
+                print_manifest(console, hostname, manifest, fancy)
 
 
 click.rich_click.OPTION_GROUPS["jujucvetool get-manifests"] = [
@@ -99,7 +125,7 @@ click.rich_click.OPTION_GROUPS["jujucvetool get-manifests"] = [
     metavar="CONTROLLER",
     type=click.STRING,
     required=True,
-    help="\n\n".join(["Process the specified controller."]),
+    help="Process the specified controller.",
 )
 @click.option(
     "--model",
@@ -107,11 +133,22 @@ click.rich_click.OPTION_GROUPS["jujucvetool get-manifests"] = [
     metavar="MODEL",
     type=click.STRING,
     required=True,
-    help="\n\n".join(["Process the specified model."]),
+    help="Process the specified model.",
+)
+@click.option(
+    "-o",
+    "--output",
+    metavar="FILE",
+    type=click.File(mode="w", encoding="utf-8"),
+    required=False,
+    default=None,
+    help="Output the manifest to the specified file.",
 )
 @click.argument("machine", metavar="ID", type=click.STRING)
 @click.pass_context
-def get_manifest(context: RichContext, fancy: bool, controller: str, model: str, machine: str) -> None:
+def get_manifest(
+    context: RichContext, fancy: bool, controller: str, model: str, machine: str, output: Optional[TextIOWrapper]
+) -> None:
     cloud: Cloud = context.obj["cloud"]
     console = Console()
 
@@ -123,10 +160,18 @@ def get_manifest(context: RichContext, fancy: bool, controller: str, model: str,
     if not selected_machine:
         raise ValueError("Could not find the specified machine")
 
-    print_manifest(console, fancy, selected_machine)
+    hostname = selected_machine.hostname
+    manifest = selected_machine.manifest
+
+    if output:
+        output.write(manifest)
+        output.close()
+    else:
+        print_manifest(console, hostname, manifest, fancy)
 
 
 click.rich_click.OPTION_GROUPS["jujucvetool get-manifest"] = [
     {"name": "Formatting", "options": ["--fancy/--no-fancy"]},
     {"name": "Selection", "options": ["--controller", "--model", "machine"]},
+    {"name": "Output", "options": ["--output"]},
 ]
