@@ -8,6 +8,7 @@ A highly automated tool for examining [Critical Vulnerabilities and Exposures][w
 [![License][shield-license]][url-license]
 ![Programming Language][shield-language]
 [![Tests][shield-tests]][url-tests]
+[![Coverage][shield-codecov]][url-codecov]
 
 <hr>
 </div>
@@ -91,3 +92,5 @@ poetry run pytest -s
 [shield-tests]: https://img.shields.io/github/actions/workflow/status/johnlettman/jujucvetool/ci.yml?style=for-the-badge&label=tests
 [url-tests]: https://github.com/johnlettman/jujucvetool/actions/workflows/ci.yml
 
+[shield-codecov]: https://img.shields.io/codecov/c/github/johnlettman/jujucvetool?style=for-the-badge
+[url-codecov]: https://app.codecov.io/gh/johnlettman/jujucvetool
