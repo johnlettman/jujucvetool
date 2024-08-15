@@ -3,7 +3,7 @@
 ![Screenshot][screenshot]
 
 # Juju CVE Tool
-A highly automated tool for examining [Critical Vulnerabilities and Exposures][wiki-cve] on Debian and Ubuntu systems managed by Juju.
+A highly automated tool for examining [Critical Vulnerabilities and Exposures][wiki-cve] on Ubuntu systems managed by Juju.
 
 <hr>
 </div>
