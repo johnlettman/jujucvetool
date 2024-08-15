@@ -80,8 +80,8 @@ def get_manifests(
     cloud: Cloud = context.obj["cloud"]
     console = Console()
 
-    for model in cloud.filter(controller, model, skip_controller, skip_model):
-        for machine in model.machines:
+    for cloud_model in cloud.filter(controller, model, skip_controller, skip_model):
+        for machine in cloud_model.machines:
             print_manifest(console, fancy, machine)
 
 
