@@ -94,6 +94,14 @@ class Cloud(Connection, Context):
                       and model.short_name not in not_models):
                     yield model
 
+    def find(self, controller_name: str, model_name: str) -> Optional[Model]:
+        for controller in self.controllers:
+            if controller.name == controller_name:
+                for model in controller.models:
+                    if model.short_name == model_name or model.name == model_name:
+                        return model
+
+
 
 
 

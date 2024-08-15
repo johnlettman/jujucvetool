@@ -1,9 +1,10 @@
 from functools import reduce, lru_cache
 
 from cvescan.constants import UCT_DATA_URL
+from cvescan.cvescanner import CVEScanner
 from cvescan.scan_result import ScanResult
 from enum import Enum
-from typing import Iterable, Dict
+from typing import Iterable, Dict, Any
 from logging import getLogger
 
 from ust_download_cache import USTDownloadCache
@@ -52,6 +53,10 @@ def get_ust_download_cache() -> USTDownloadCache:
     return USTDownloadCache(getLogger())
 
 @lru_cache()
-def get_ust_data_for(series: str = "xenial"):
+def get_ust_data_for(series: str = "xenial") -> Any:
     url = UCT_DATA_URL % series
     return get_ust_download_cache().get_data_from_url(url)
+
+@singleton
+def get_scanner() -> CVEScanner:
+    return CVEScanner(getLogger())

@@ -5,13 +5,14 @@ from typing import Union, Optional, List
 
 import fabric
 import rich_click as click
-from rich.console import Console
 from rich.logging import RichHandler
-from rich.table import Table
 from rich.traceback import install as install_traceback
 from rich_click import RichContext, rich_click
 
 from jujucvetool.cloud import Cloud
+from jujucvetool.cli.manifest import get_manifest, get_manifests
+from jujucvetool.cli.list import list_models, list_controllers
+from jujucvetool.cli.cve import cves_for
 
 PROGRAM_NAME = "jujucvetool"
 PROGRAM_VERSION = "unknown"
@@ -71,7 +72,7 @@ def configure_logging(logging_level: Union[int, str, None]) -> None:
     logger.debug("Traceback handler installed.")
 
 
-@click.group(PROGRAM_NAME)
+@click.group("jujucvetool")
 @click.option(
     "--host",
     "-h",
@@ -117,104 +118,26 @@ def main(context: RichContext, host: str, user: Optional[str], verbose: int = 0)
     context.obj["cloud"] = Cloud(host, user, config=conf)
 
 
-click.rich_click.OPTION_GROUPS[PROGRAM_NAME] = [
+click.rich_click.OPTION_GROUPS["jujucvetool"] = [
     {"name": "Connection", "options": ["--host", "--user"]}
 ]
 
 
-@click.command("list-controllers")
-@click.pass_context
-def list_controllers(context: RichContext):
-    cloud: Cloud = context.obj["cloud"]
-
-    for controller in cloud.controllers:
-        print(str(controller))
 
 
-@click.command("list-models")
-@click.pass_context
-def list_models(context: RichContext):
-    cloud: Cloud = context.obj["cloud"]
-
-    for controller in cloud.controllers:
-        for model in controller.models:
-            print(str(model))
 
 
-FORMAT_GROUP = {"name": "Formatting", "options": ["--fancy/--no-fancy"]}
-FILTERS_GROUP = {"name": "Selection", "options": ["--controller", "--model", "--skip-controller", "--skip-model"]}
 
 
-@click.command("get-manifests")
-@click.option(
-    "--fancy/--no-fancy",
-    type=click.BOOL,
-    default=True,
-    help="Use fancy output.")
-@click.option(
-    "--controller",
-    "-c",
-    metavar="CONTROLLER",
-    type=click.STRING,
-    multiple=True,
-    help="\n\n".join([
-        "Process the specified controller. [b][cyan]Supports multiple.[/cyan][/b]",
-        "[i]When specified, this overrides the default behavior of selecting all controllers.[/i]"
-    ]))
-@click.option(
-    "--model",
-    "-m",
-    metavar="MODEL",
-    type=click.STRING,
-    multiple=True,
-    help="\n\n".join([
-        "Process the specified controller. [b][cyan]Supports multiple.[/cyan][/b]",
-        "[i]When specified, this overrides the default behavior of selecting all models.[/i]"
-    ]))
-@click.option(
-    "--skip-controller",
-    "-C",
-    metavar="CONTROLLER",
-    type=click.STRING,
-    multiple=True,
-    help="Skip processing the specified controller. [b][cyan]Supports multiple.[/cyan][/b]")
-@click.option(
-    "--skip-model",
-    "-M",
-    metavar="MODEL",
-    type=click.STRING,
-    multiple=True,
-    help="Skip processing the specified model. [b][cyan]Supports multiple.[/cyan][/b]")
-@click.pass_context
-def get_manifests(context: RichContext, fancy: bool, controller: List[str], model: List[str],
-                  skip_controller: List[str], skip_model: List[str]):
-    cloud: Cloud = context.obj["cloud"]
-    console = Console()
-
-    for model in cloud.filter(controller, model, skip_controller, skip_model):
-        for machine in model.machines:
-            if fancy:
-                table = Table(title=machine.hostname, title_justify="left", row_styles=["dim", ""])
-                table.add_column("Package", justify="left", style="bold cyan", no_wrap=True)
-                table.add_column("Version", justify="left", style="green", no_wrap=True)
-
-                for line in machine.manifest.splitlines():
-                    (package, package_version) = line.split("\t")
-                    table.add_row(package, package_version)
-
-                console.print(table)
-            else:
-                console.print(machine.manifest)
 
 
-click.rich_click.OPTION_GROUPS[" ".join([PROGRAM_NAME, "get-manifests"])] = [
-    FORMAT_GROUP,
-    FILTERS_GROUP
-]
+
 
 main.add_command(list_controllers)
 main.add_command(list_models)
+main.add_command(get_manifest)
 main.add_command(get_manifests)
+main.add_command(cves_for)
 
 if __name__ == "__main__":
-    main(obj={}, prog_name=PROGRAM_NAME)
+    main(obj={}, prog_name="jujucvetool")

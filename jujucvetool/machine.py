@@ -2,11 +2,12 @@ from shlex import quote as shell_quote
 from typing import TYPE_CHECKING, Dict, Union, Optional
 
 from cvescan.dpkg_parser import get_installed_pkgs_from_manifest as packages_from_manifest
-from cvescan.manifest_parser import _get_codename as codename_from_manifest
+from cvescan.scan_result import ScanResult
 from fabric import Result as FabricResult
 from invoke import Result as InvokeResult
 
-from jujucvetool.util import cached_property
+from jujucvetool.cve import get_scanner, get_ust_download_cache, get_ust_data_for
+from jujucvetool.util import cached_property, codename_from_manifest
 
 if TYPE_CHECKING:
     from jujucvetool.cloud import Cloud
@@ -43,14 +44,23 @@ class Machine:
     def hostname(self) -> str:
         return self.run("hostname").stdout
 
-    @cached_property
+    @property
     def manifest(self) -> str:
         return self.run("dpkg-query -W").stdout
 
-    @cached_property
+    @property
     def packages(self) -> Dict[str, str]:
         return packages_from_manifest(self.manifest)
 
     @cached_property
     def codename(self) -> str:
-        return codename_from_manifest(self.manifest)
+        return codename_from_manifest(self.packages)
+
+    @property
+    def cves(self) -> list[ScanResult]:
+        data = get_ust_data_for(self.codename)
+        scanner = get_scanner()
+
+        return scanner.scan(self.codename, data, self.packages)
+
+

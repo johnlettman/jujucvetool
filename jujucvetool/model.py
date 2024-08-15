@@ -38,3 +38,8 @@ class Model:
 
         machine_ids = parsed["machines"].keys()
         return map(lambda machine_id: Machine(machine_id, self), machine_ids)
+
+    def find(self, machine_id: str) -> Optional[Machine]:
+        for machine in self.machines:
+            if machine.machine_id == machine_id:
+                return machine
