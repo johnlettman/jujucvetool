@@ -1,9 +1,14 @@
 import json
-from typing import TYPE_CHECKING, Optional, Dict, Any, Iterable
 from shlex import quote as shell_quote
+from typing import TYPE_CHECKING
+from typing import Any
+from typing import Dict
+from typing import Iterable
+from typing import Optional
 
 from jujucvetool.model import Model
 from jujucvetool.util import cached_property
+
 
 if TYPE_CHECKING:
     from jujucvetool.cloud import Cloud

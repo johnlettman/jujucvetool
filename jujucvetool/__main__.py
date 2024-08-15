@@ -1,18 +1,24 @@
 #!/usr/bin/env python3
+from importlib.metadata import PackageNotFoundError
+from importlib.metadata import version
 import logging
-from importlib.metadata import PackageNotFoundError, version
-from typing import Union, Optional
+from typing import Optional
+from typing import Union
 
 import fabric
-import rich_click as click
 from rich.logging import RichHandler
 from rich.traceback import install as install_traceback
-from rich_click import RichContext, rich_click
+from rich_click import RichContext
+from rich_click import rich_click
+import rich_click as click
 
 from jujucvetool.cli.cve import cves_for
-from jujucvetool.cli.list import list_models, list_controllers
-from jujucvetool.cli.manifest import get_manifest, get_manifests
+from jujucvetool.cli.list import list_controllers
+from jujucvetool.cli.list import list_models
+from jujucvetool.cli.manifest import get_manifest
+from jujucvetool.cli.manifest import get_manifests
 from jujucvetool.cloud import Cloud
+
 
 PROGRAM_NAME = "jujucvetool"
 
@@ -38,8 +44,7 @@ click.rich_click.GROUP_ARGUMENTS_OPTIONS = True
 click.rich_click.STYLE_OPTION_DEFAULT = "dim cyan"
 
 click.rich_click.ERRORS_SUGGESTION = (
-    "[b][i]D'oh![/i][/b] That's not right. "
-    "Try running the '--help' flag for more information.\n"
+    "[b][i]D'oh![/i][/b] That's not right. " "Try running the '--help' flag for more information.\n"
 )
 
 click.rich_click.ERRORS_EPILOGUE = (
@@ -80,21 +85,24 @@ def configure_logging(logging_level: Union[int, str, None]) -> None:
     metavar="HOSTNAME",
     type=click.STRING,
     default="local",
-    help="Login to the specified host for interacting with Juju. [b][cyan]Defaults to local.[/cyan][/b]")
+    help="Login to the specified host for interacting with Juju. [b][cyan]Defaults to local.[/cyan][/b]",
+)
 @click.option(
     "--user",
     "-u",
     metavar="USERNAME",
     type=click.STRING,
     default=None,
-    help="Login with specified user for interacting with Juju.")
+    help="Login with specified user for interacting with Juju.",
+)
 @click.option(
     "--verbose",
     "-v",
     metavar="V",
     type=click.IntRange(0, 3, clamp=True),
     count=True,
-    help="Increase logging verbosity.")
+    help="Increase logging verbosity.",
+)
 @click.pass_context
 @click.version_option(PROGRAM_VERSION, "--version", "-V")
 def main(context: RichContext, host: str, user: Optional[str], verbose: int = 0) -> None:
@@ -107,21 +115,21 @@ def main(context: RichContext, host: str, user: Optional[str], verbose: int = 0)
     # configure SSH connections
     fabric.Config.global_defaults()
     conf = fabric.Config()
-    conf.update(connect_kwargs={
-        'look_for_keys': False,
-        "allow_agent": True,
-        "disabled_algorithms": dict(
-            pubkeys=["rsa-sha2-512", "rsa-sha2-256"],
-            keys=["rsa-sha2-512", "rsa-sha2-256"])
-    })
+    conf.update(
+        connect_kwargs={
+            "look_for_keys": False,
+            "allow_agent": True,
+            "disabled_algorithms": dict(
+                pubkeys=["rsa-sha2-512", "rsa-sha2-256"], keys=["rsa-sha2-512", "rsa-sha2-256"]
+            ),
+        }
+    )
 
     # connect to cloud
     context.obj["cloud"] = Cloud(host, user, config=conf)
 
 
-click.rich_click.OPTION_GROUPS["jujucvetool"] = [
-    {"name": "Connection", "options": ["--host", "--user"]}
-]
+click.rich_click.OPTION_GROUPS["jujucvetool"] = [{"name": "Connection", "options": ["--host", "--user"]}]
 
 main.add_command(list_controllers)
 main.add_command(list_models)

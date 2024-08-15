@@ -1,7 +1,11 @@
 from enum import Enum
-from functools import reduce, lru_cache
+from functools import lru_cache
+from functools import reduce
 from logging import getLogger
-from typing import Iterable, Dict, Any, Callable
+from typing import Any
+from typing import Callable
+from typing import Dict
+from typing import Iterable
 
 from cvescan.constants import UCT_DATA_URL
 from cvescan.cvescanner import CVEScanner

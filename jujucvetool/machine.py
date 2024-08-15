@@ -1,12 +1,19 @@
 from shlex import quote as shell_quote
-from typing import TYPE_CHECKING, Dict, Union, Optional
+from typing import TYPE_CHECKING
+from typing import Dict
+from typing import Optional
+from typing import Union
 
 from cvescan.dpkg_parser import get_installed_pkgs_from_manifest as packages_from_manifest
 from fabric import Result as FabricResult
 from invoke import Result as InvokeResult
 
-from jujucvetool.cve import get_scanner,  get_ust_data_for, ScanResults
-from jujucvetool.util import cached_property, codename_from_manifest
+from jujucvetool.cve import ScanResults
+from jujucvetool.cve import get_scanner
+from jujucvetool.cve import get_ust_data_for
+from jujucvetool.util import cached_property
+from jujucvetool.util import codename_from_manifest
+
 
 if TYPE_CHECKING:
     from jujucvetool.cloud import Cloud
@@ -61,5 +68,3 @@ class Machine:
         scanner = get_scanner()
 
         return scanner.scan(self.codename, data, self.packages)
-
-

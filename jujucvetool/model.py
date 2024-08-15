@@ -1,8 +1,13 @@
 import json
 from shlex import quote as shell_quote
-from typing import TYPE_CHECKING, Iterable, Optional, Dict, Any
+from typing import TYPE_CHECKING
+from typing import Any
+from typing import Dict
+from typing import Iterable
+from typing import Optional
 
 from jujucvetool.machine import Machine
+
 
 if TYPE_CHECKING:
     from jujucvetool.cloud import Cloud

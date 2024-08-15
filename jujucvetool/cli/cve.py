@@ -1,12 +1,13 @@
 from typing import List
 
-import rich_click as click
 from rich.console import Console
 from rich.table import Table
 from rich_click import RichContext
+import rich_click as click
 
 from jujucvetool.cloud import Cloud
-from jujucvetool.cve import map_result_ids, id_to_rich_link
+from jujucvetool.cve import id_to_rich_link
+from jujucvetool.cve import map_result_ids
 from jujucvetool.machine import Machine
 
 
@@ -28,54 +29,62 @@ def print_cves(console: Console, fancy: bool, machine: Machine):
         console.print(f"# {machine.hostname}")
         for row in map_result_ids(results, id_to_rich_link):
             (cve, priority, package, fixed_version, repository) = row
-            console.print(f"- {cve} {priority} {package}\n"
-                          f"  fixed in: {fixed_version}\n"
-                          f"  repo: {repository}\n")
+            console.print(f"- {cve} {priority} {package}\n" f"  fixed in: {fixed_version}\n" f"  repo: {repository}\n")
 
 
 @click.command("cves")
-@click.option(
-    "--fancy/--no-fancy",
-    type=click.BOOL,
-    default=True,
-    help="Use fancy output.")
+@click.option("--fancy/--no-fancy", type=click.BOOL, default=True, help="Use fancy output.")
 @click.option(
     "--controller",
     "-c",
     metavar="CONTROLLER",
     type=click.STRING,
     multiple=True,
-    help="\n\n".join([
-        "Process the specified controller. [b][cyan]Supports multiple.[/cyan][/b]",
-        "[i]When specified, this overrides the default behavior of selecting all controllers.[/i]"
-    ]))
+    help="\n\n".join(
+        [
+            "Process the specified controller. [b][cyan]Supports multiple.[/cyan][/b]",
+            "[i]When specified, this overrides the default behavior of selecting all controllers.[/i]",
+        ]
+    ),
+)
 @click.option(
     "--model",
     "-m",
     metavar="MODEL",
     type=click.STRING,
     multiple=True,
-    help="\n\n".join([
-        "Process the specified model. [b][cyan]Supports multiple.[/cyan][/b]",
-        "[i]When specified, this overrides the default behavior of selecting all models.[/i]"
-    ]))
+    help="\n\n".join(
+        [
+            "Process the specified model. [b][cyan]Supports multiple.[/cyan][/b]",
+            "[i]When specified, this overrides the default behavior of selecting all models.[/i]",
+        ]
+    ),
+)
 @click.option(
     "--skip-controller",
     "-C",
     metavar="CONTROLLER",
     type=click.STRING,
     multiple=True,
-    help="Skip processing the specified controller. [b][cyan]Supports multiple.[/cyan][/b]")
+    help="Skip processing the specified controller. [b][cyan]Supports multiple.[/cyan][/b]",
+)
 @click.option(
     "--skip-model",
     "-M",
     metavar="MODEL",
     type=click.STRING,
     multiple=True,
-    help="Skip processing the specified model. [b][cyan]Supports multiple.[/cyan][/b]")
+    help="Skip processing the specified model. [b][cyan]Supports multiple.[/cyan][/b]",
+)
 @click.pass_context
-def cves(context: RichContext, fancy: bool, controller: List[str], model: List[str],
-         skip_controller: List[str], skip_model: List[str]) -> None:
+def cves(
+    context: RichContext,
+    fancy: bool,
+    controller: List[str],
+    model: List[str],
+    skip_controller: List[str],
+    skip_model: List[str],
+) -> None:
     cloud: Cloud = context.obj["cloud"]
     console = Console()
 
@@ -86,38 +95,22 @@ def cves(context: RichContext, fancy: bool, controller: List[str], model: List[s
 
 click.rich_click.OPTION_GROUPS["jujucvetool cves"] = [
     {"name": "Formatting", "options": ["--fancy/--no-fancy"]},
-    {"name": "Selection", "options": ["--controller", "--model", "--skip-controller", "--skip-model"]}
+    {"name": "Selection", "options": ["--controller", "--model", "--skip-controller", "--skip-model"]},
 ]
 
 
 @click.command("cves-for")
-@click.option(
-    "--fancy/--no-fancy",
-    type=click.BOOL,
-    default=True,
-    help="Use fancy output.")
+@click.option("--fancy/--no-fancy", type=click.BOOL, default=True, help="Use fancy output.")
 @click.option(
     "--controller",
     "-c",
     metavar="CONTROLLER",
     type=click.STRING,
     required=True,
-    help="\n\n".join([
-        "Process the specified controller."
-    ]))
-@click.option(
-    "--model",
-    "-m",
-    metavar="MODEL",
-    type=click.STRING,
-    required=True,
-    help="\n\n".join([
-        "Process the specified model."
-    ]))
-@click.argument(
-    "machine",
-    metavar="ID",
-    type=click.STRING)
+    help="Process the specified controller.",
+)
+@click.option("--model", "-m", metavar="MODEL", type=click.STRING, required=True, help="Process the specified model.")
+@click.argument("machine", metavar="ID", type=click.STRING)
 @click.pass_context
 def cves_for(context: RichContext, fancy: bool, controller: str, model: str, machine: str) -> None:
     cloud: Cloud = context.obj["cloud"]
@@ -136,5 +129,28 @@ def cves_for(context: RichContext, fancy: bool, controller: str, model: str, mac
 
 click.rich_click.OPTION_GROUPS["jujucvetool cves-for"] = [
     {"name": "Formatting", "options": ["--fancy/--no-fancy"]},
-    {"name": "Selection", "options": ["--controller", "--model", "machine"]}
+    {"name": "Selection", "options": ["--controller", "--model", "machine"]},
+    {"name": "Output", "options": ["--output", "--format"]},
 ]
+
+
+# TODO:
+# @click.option(
+#     "--output",
+#     "-o",
+#     metavar="FILE",
+#     type=click.File,
+#     required=False,
+#     default=None,
+#     help="Output the results to the specified file.",
+# )
+# @click.option(
+#     "--format",
+#     "-f",
+#     metavar="FORMAT",
+#     type=click.STRING,
+#     options=("csv", "json", "adoc", "pdf"),
+#     default="csv",
+#     show_default=True,
+#     help="Output the results with the specified format.",
+# )

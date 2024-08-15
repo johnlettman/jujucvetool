@@ -51,6 +51,30 @@ To run `jujucvetool` within the virtual environment:
 python -m jujucvetool --help
 ```
 
+#### Performing checks locally
+```bash
+# Lint import order with isort
+poetry run isort ./jujucvetool --check
+
+# Fix import order with isort
+poetry run isort ./jujucvetool
+
+# Lint with flake8
+poetry run flake8 ./jujucvetool
+
+# Lint with mypy
+poetry run mypy ./jujucvetool
+
+# Lint code format with black
+poetry run black ./jujucvetool --check
+
+# Fix code format with black
+poetry run black ./jujucvetool
+
+# Execute unit tests
+poetry run pytest -s
+```
+
 
 [screenshot]: .github/assets/screenshot.png
 [wiki-cve]: https://en.wikipedia.org/wiki/Common_Vulnerabilities_and_Exposures

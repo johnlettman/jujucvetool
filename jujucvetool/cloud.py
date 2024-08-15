@@ -1,18 +1,27 @@
 import json
-from typing import Dict, Any, Optional, List, Iterable, Generator, Union
+from typing import Any
+from typing import Dict
+from typing import Generator
+from typing import Iterable
+from typing import List
+from typing import Optional
+from typing import Union
 
-from fabric import Connection, Config, Result as FabricResult
+from fabric import Config
+from fabric import Connection
+from fabric import Result as FabricResult
 from invoke import Result as InvokeResult
 from invoke.context import Context
 
+from jujucvetool.controller import Controller
 from jujucvetool.model import Model
 from jujucvetool.util import cached_property
-from jujucvetool.controller import Controller
+
 
 class Cloud(Connection, Context):
     doas: str | None = None
 
-    def __init__(self, host: str, doas: str|None =None, *args, **kwargs):
+    def __init__(self, host: str, doas: str | None = None, *args, **kwargs):
         self.doas = doas
 
         if host == "local":
@@ -20,16 +29,17 @@ class Cloud(Connection, Context):
             self.original_host = host
         else:
             config = Config()
-            config.update(connect_kwargs={
-                "look_for_keys": False,
-                "allow_agent": True,
-                "disabled_algorithms": dict(
-                    pubkeys=["rsa-sha2-512", "rsa-sha2-256"],
-                    keys=["rsa-sha2-512", "rsa-sha2-256"])
-            })
+            config.update(
+                connect_kwargs={
+                    "look_for_keys": False,
+                    "allow_agent": True,
+                    "disabled_algorithms": dict(
+                        pubkeys=["rsa-sha2-512", "rsa-sha2-256"], keys=["rsa-sha2-512", "rsa-sha2-256"]
+                    ),
+                }
+            )
 
-            Connection.__init__(
-                self, host, config=config, *args, **kwargs)
+            Connection.__init__(self, host, config=config, *args, **kwargs)
 
     def open(self) -> None:
         if self.original_host != "local":
@@ -43,13 +53,17 @@ class Cloud(Connection, Context):
             kwargs["warn"] = False
 
         if self.doas is None or self.doas == self.user:
-            return Context.run(self, *args, **kwargs) \
-                if self.original_host == "local" \
+            return (
+                Context.run(self, *args, **kwargs)
+                if self.original_host == "local"
                 else Connection.run(self, *args, **kwargs)
+            )
         else:
-            return Context.sudo(self, user=self.doas, *args, **kwargs) \
-                if self.original_host == "local" \
+            return (
+                Context.sudo(self, user=self.doas, *args, **kwargs)
+                if self.original_host == "local"
                 else Connection.sudo(self, user=self.doas, *args, **kwargs)
+            )
 
     @cached_property
     def controllers(self) -> Iterable[Controller]:
@@ -77,21 +91,18 @@ class Cloud(Connection, Context):
     def whoami(self) -> str:
         return self.run("whoami").stdout
 
-    def filter(self,
-               is_controllers: List[str],
-               is_models: List[str],
-               not_controllers: List[str],
-               not_models: List[str]) -> Generator[Model, None, None]:
+    def filter(
+        self, is_controllers: List[str], is_models: List[str], not_controllers: List[str], not_models: List[str]
+    ) -> Generator[Model, None, None]:
         for controller in self.controllers:
             for model in controller.models:
-                if ((len(is_controllers) == 0 or model.controller.name in is_controllers)
-                    and model.controller.name not in not_controllers):
+                if (
+                    len(is_controllers) == 0 or model.controller.name in is_controllers
+                ) and model.controller.name not in not_controllers:
                     yield model
-                elif ((len(is_models) == 0 or model.name in is_models)
-                      and model.name not in not_models):
+                elif (len(is_models) == 0 or model.name in is_models) and model.name not in not_models:
                     yield model
-                elif ((len(is_models) == 0 or model.short_name in is_models)
-                      and model.short_name not in not_models):
+                elif (len(is_models) == 0 or model.short_name in is_models) and model.short_name not in not_models:
                     yield model
 
     def find(self, controller_name: str, model_name: str) -> Optional[Model]:
@@ -103,8 +114,3 @@ class Cloud(Connection, Context):
 
         # none found:
         return None
-
-
-
-
-

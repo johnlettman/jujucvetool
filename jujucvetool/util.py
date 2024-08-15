@@ -1,5 +1,5 @@
-import re
 from functools import wraps
+import re
 
 
 def cached_property(func):
@@ -58,7 +58,4 @@ def codename_from_manifest(installed_pkgs):
 
         raise Exception("Could not match version to a supported release.")
     except Exception as e:
-        raise Exception(
-            "Failed to determine ubuntu release codename from the provided "
-            "manifest file: %s" % e
-        )
+        raise Exception("Failed to determine ubuntu release codename from the provided " "manifest file: %s" % e)

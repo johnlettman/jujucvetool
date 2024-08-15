@@ -1,9 +1,9 @@
 from typing import List
 
-import rich_click as click
 from rich.console import Console
 from rich.table import Table
 from rich_click import RichContext
+import rich_click as click
 
 from jujucvetool.cloud import Cloud
 from jujucvetool.machine import Machine
@@ -25,48 +25,58 @@ def print_manifest(console: Console, fancy: bool, machine: Machine) -> None:
 
 
 @click.command("get-manifests")
-@click.option(
-    "--fancy/--no-fancy",
-    type=click.BOOL,
-    default=True,
-    help="Use fancy output.")
+@click.option("--fancy/--no-fancy", type=click.BOOL, default=True, help="Use fancy output.")
 @click.option(
     "--controller",
     "-c",
     metavar="CONTROLLER",
     type=click.STRING,
     multiple=True,
-    help="\n\n".join([
-        "Process the specified controller. [b][cyan]Supports multiple.[/cyan][/b]",
-        "[i]When specified, this overrides the default behavior of selecting all controllers.[/i]"
-    ]))
+    help="\n\n".join(
+        [
+            "Process the specified controller. [b][cyan]Supports multiple.[/cyan][/b]",
+            "[i]When specified, this overrides the default behavior of selecting all controllers.[/i]",
+        ]
+    ),
+)
 @click.option(
     "--model",
     "-m",
     metavar="MODEL",
     type=click.STRING,
     multiple=True,
-    help="\n\n".join([
-        "Process the specified model. [b][cyan]Supports multiple.[/cyan][/b]",
-        "[i]When specified, this overrides the default behavior of selecting all models.[/i]"
-    ]))
+    help="\n\n".join(
+        [
+            "Process the specified model. [b][cyan]Supports multiple.[/cyan][/b]",
+            "[i]When specified, this overrides the default behavior of selecting all models.[/i]",
+        ]
+    ),
+)
 @click.option(
     "--skip-controller",
     "-C",
     metavar="CONTROLLER",
     type=click.STRING,
     multiple=True,
-    help="Skip processing the specified controller. [b][cyan]Supports multiple.[/cyan][/b]")
+    help="Skip processing the specified controller. [b][cyan]Supports multiple.[/cyan][/b]",
+)
 @click.option(
     "--skip-model",
     "-M",
     metavar="MODEL",
     type=click.STRING,
     multiple=True,
-    help="Skip processing the specified model. [b][cyan]Supports multiple.[/cyan][/b]")
+    help="Skip processing the specified model. [b][cyan]Supports multiple.[/cyan][/b]",
+)
 @click.pass_context
-def get_manifests(context: RichContext, fancy: bool, controller: List[str], model: List[str],
-                  skip_controller: List[str], skip_model: List[str]) -> None:
+def get_manifests(
+    context: RichContext,
+    fancy: bool,
+    controller: List[str],
+    model: List[str],
+    skip_controller: List[str],
+    skip_model: List[str],
+) -> None:
     cloud: Cloud = context.obj["cloud"]
     console = Console()
 
@@ -74,40 +84,32 @@ def get_manifests(context: RichContext, fancy: bool, controller: List[str], mode
         for machine in model.machines:
             print_manifest(console, fancy, machine)
 
+
 click.rich_click.OPTION_GROUPS["jujucvetool get-manifests"] = [
     {"name": "Formatting", "options": ["--fancy/--no-fancy"]},
-    {"name": "Selection", "options": ["--controller", "--model", "--skip-controller", "--skip-model"]}
+    {"name": "Selection", "options": ["--controller", "--model", "--skip-controller", "--skip-model"]},
 ]
 
 
 @click.command("get-manifest")
-@click.option(
-    "--fancy/--no-fancy",
-    type=click.BOOL,
-    default=True,
-    help="Use fancy output.")
+@click.option("--fancy/--no-fancy", type=click.BOOL, default=True, help="Use fancy output.")
 @click.option(
     "--controller",
     "-c",
     metavar="CONTROLLER",
     type=click.STRING,
     required=True,
-    help="\n\n".join([
-        "Process the specified controller."
-    ]))
+    help="\n\n".join(["Process the specified controller."]),
+)
 @click.option(
     "--model",
     "-m",
     metavar="MODEL",
     type=click.STRING,
     required=True,
-    help="\n\n".join([
-        "Process the specified model."
-    ]))
-@click.argument(
-    "machine",
-    metavar="ID",
-    type=click.STRING)
+    help="\n\n".join(["Process the specified model."]),
+)
+@click.argument("machine", metavar="ID", type=click.STRING)
 @click.pass_context
 def get_manifest(context: RichContext, fancy: bool, controller: str, model: str, machine: str) -> None:
     cloud: Cloud = context.obj["cloud"]
@@ -123,7 +125,8 @@ def get_manifest(context: RichContext, fancy: bool, controller: str, model: str,
 
     print_manifest(console, fancy, selected_machine)
 
+
 click.rich_click.OPTION_GROUPS["jujucvetool get-manifest"] = [
     {"name": "Formatting", "options": ["--fancy/--no-fancy"]},
-    {"name": "Selection", "options": ["--controller", "--model", "machine"]}
+    {"name": "Selection", "options": ["--controller", "--model", "machine"]},
 ]
