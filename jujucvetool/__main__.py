@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import logging
 from importlib.metadata import PackageNotFoundError, version
-from typing import Union, Optional, List
+from typing import Union, Optional
 
 import fabric
 import rich_click as click
@@ -9,10 +9,10 @@ from rich.logging import RichHandler
 from rich.traceback import install as install_traceback
 from rich_click import RichContext, rich_click
 
-from jujucvetool.cloud import Cloud
-from jujucvetool.cli.manifest import get_manifest, get_manifests
-from jujucvetool.cli.list import list_models, list_controllers
 from jujucvetool.cli.cve import cves_for
+from jujucvetool.cli.list import list_models, list_controllers
+from jujucvetool.cli.manifest import get_manifest, get_manifests
+from jujucvetool.cloud import Cloud
 
 PROGRAM_NAME = "jujucvetool"
 PROGRAM_VERSION = "unknown"
@@ -121,17 +121,6 @@ def main(context: RichContext, host: str, user: Optional[str], verbose: int = 0)
 click.rich_click.OPTION_GROUPS["jujucvetool"] = [
     {"name": "Connection", "options": ["--host", "--user"]}
 ]
-
-
-
-
-
-
-
-
-
-
-
 
 main.add_command(list_controllers)
 main.add_command(list_models)
