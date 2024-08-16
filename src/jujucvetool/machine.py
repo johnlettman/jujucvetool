@@ -57,11 +57,11 @@ class Machine:
 
     @cached_property
     def hostname(self) -> str:
-        return self.run("hostname").stdout
+        return self.run("hostname").stdout.strip()
 
     @property
     def manifest(self) -> str:
-        return self.run("dpkg-query -W").stdout
+        return self.run("dpkg-query -W").stdout.strip()
 
     @property
     def packages(self) -> Dict[str, str]:

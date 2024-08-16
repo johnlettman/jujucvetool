@@ -1,6 +1,10 @@
+from collections import namedtuple
+import csv
 from enum import Enum
 from functools import lru_cache
 from functools import reduce
+from io import TextIOWrapper
+import json
 from logging import getLogger
 from typing import Any
 from typing import Callable
@@ -30,6 +34,9 @@ class Priority(Enum):
 ScanResults = Iterable[ScanResult]
 ScanResultIDTransform = Callable[[str], str]
 PrioritiesTally = Dict[Priority, int]
+
+ScanResultsForMachine = namedtuple("ScanResultsForMachine", ["machine", "results"])
+ScanResultsByMachine = Iterable[ScanResultsForMachine]
 
 
 def sort_priority(results: ScanResults) -> ScanResults:
@@ -81,3 +88,23 @@ def get_ust_data_for(series: str = "xenial") -> Any:
 @singleton
 def get_scanner() -> CVEScanner:
     return CVEScanner(getLogger())
+
+
+def results_by_machine_to_csv(file: TextIOWrapper, results: ScanResultsByMachine) -> None:
+    header = ("Model", "Machine ID", "Hostname", "CVE", "Priority", "Package Name", "Fixed Version", "Repository")
+    writer = csv.writer(file)
+    writer.writerow(header)
+    for result in results:
+        (machine, scan_results) = result
+        for scan_result in scan_results:
+            writer.writerow([str(machine.model), str(machine.machine_id), str(machine.hostname), *scan_result])
+
+
+def results_by_machine_to_json(file: TextIOWrapper, results: ScanResultsByMachine) -> None:
+    json_object = {}
+
+    for result in results:
+        (machine, scan_results) = result
+        json_object[str(machine.slug)] = scan_results
+
+    json.dump(json_object, file, indent=4)
