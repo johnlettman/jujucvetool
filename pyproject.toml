@@ -42,7 +42,7 @@ isort = "^6.1.0"
 black = "^25.9.0"
 mypy = "^1.18"
 flake8 = "^7.3.0"
-Flake8-pyproject = "^1.2.3"
+Flake8-pyproject = "^1.2.4"
 flake8-bugbear = "^24.12.12"
 
 [tool.poetry.group.test]
